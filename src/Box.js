@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useFrame, useLoader } from "react-three-fiber";
 import { TextureLoader } from "three";
 import box from "./box.jpg";
@@ -30,8 +30,6 @@ export default function Box(props) {
   });
 
   const mouseUp = e => {
-    console.log(e.clientX);
-
     setState({
       x: lastKnownMovement.x / scaleFactor,
       y: lastKnownMovement.y / scaleFactor,
@@ -42,6 +40,7 @@ export default function Box(props) {
   };
 
   const mouseDown = e => {
+    if (e.button !== 0) return;
     window.addEventListener("mousemove", moveCube);
     window.addEventListener("mouseup", mouseUp);
   };
