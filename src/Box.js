@@ -1,10 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useMemo } from "react";
 import { useFrame, useLoader } from "react-three-fiber";
 import { TextureLoader } from "three";
 import { useCamera } from "./CameraProvider";
 import box from "./box.jpg";
 
 export default function Box(props) {
+  const [state, setState] = useState({ x: 0, y: 0, isMoving: false });
   const controls = useCamera();
   const mesh = useRef();
   const texture = useLoader(TextureLoader, box);
@@ -17,27 +18,46 @@ export default function Box(props) {
     lastKnownMovement.x = movementX;
     lastKnownMovement.y = movementY;
   };
-  const [state, setState] = useState({ x: 0, y: 0, isMoving: false });
 
-  const maxScale = 1.2;
-  const minScale = 0.8;
+  console.log("rerendered");
 
-  let increaseBoxSize = true;
+  const boxScaling = useMemo(() =>
+    (function() {
+      let _increase = true;
+      const _max = 1.2;
+      const _min = 0.8;
+
+      const _alterBoxSize = factor => {
+        const newScaleFactor = mesh.current.scale.x + factor;
+        mesh.current.scale.x = newScaleFactor;
+        mesh.current.scale.y = newScaleFactor;
+        mesh.current.scale.z = newScaleFactor;
+      };
+
+      const increaseBoxSize = _alterBoxSize;
+      const decreaseBoxSize = factor => _alterBoxSize(-factor);
+      const stopIncreasing = () => (_increase = false);
+      const startIncreasing = () => (_increase = true);
+
+      const checkIncreasing = () => {
+        if (_increase) {
+          increaseBoxSize(0.01);
+          if (mesh.current.scale.x > _max) stopIncreasing();
+        } else {
+          decreaseBoxSize(0.01);
+          if (mesh.current.scale.x < _min) startIncreasing();
+        }
+      };
+
+      return {
+        checkIncreasing
+      };
+    })()
+  );
 
   useFrame(() => {
-    if (increaseBoxSize) {
-      const increaseScale = mesh.current.scale.x + 0.01;
-      mesh.current.scale.x = increaseScale;
-      mesh.current.scale.y = increaseScale;
-      mesh.current.scale.z = increaseScale;
-      if (mesh.current.scale.x > maxScale) increaseBoxSize = false;
-    } else {
-      const decreaseScale = mesh.current.scale.x - 0.01;
-      mesh.current.scale.x = decreaseScale;
-      mesh.current.scale.y = decreaseScale;
-      mesh.current.scale.z = decreaseScale;
-      if (mesh.current.scale.x < minScale) increaseBoxSize = true;
-    }
+    boxScaling.checkIncreasing();
+
     const currentState = state;
     if (state.isMoving) {
       mesh.current.rotation.x += currentState.y /= 1.1;
@@ -55,6 +75,7 @@ export default function Box(props) {
       y: lastKnownMovement.y / scaleFactor,
       isMoving: true
     });
+
     controls.enableRotate = true;
 
     window.removeEventListener("mousemove", moveCube);
@@ -63,6 +84,7 @@ export default function Box(props) {
 
   const mouseDown = e => {
     if (e.button !== 0) return;
+
     controls.enableRotate = false;
 
     window.addEventListener("mousemove", moveCube);
