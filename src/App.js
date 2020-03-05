@@ -1,25 +1,15 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense } from "react";
+import { Canvas } from "react-three-fiber";
+import Box from "./Box";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Canvas style={{ height: "100vh", width: "100vw" }}>
+      <ambientLight />
+      <pointLight position={[16, 7, 5]} />
+      <perspectiveCamera fov={75} aspect={2} near={0.1} far={5} />
+      <Suspense fallback="loading..."><Box position={[0, 0, 0]} /></Suspense>
+    </Canvas>
   );
 }
 
