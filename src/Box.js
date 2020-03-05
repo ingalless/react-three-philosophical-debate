@@ -6,7 +6,6 @@ import box from "./box.jpg";
 
 export default function Box(props) {
   const controls = useCamera();
-  console.log(controls);
   const mesh = useRef();
   const texture = useLoader(TextureLoader, box);
   const lastKnownMovement = { x: 0, y: 0 };
@@ -20,7 +19,21 @@ export default function Box(props) {
   };
   const [state, setState] = useState({ x: 0, y: 0, isMoving: false });
 
+  const maxScale = 2;
+  const minScale = 0.5;
   useFrame(() => {
+    console.log(mesh.current.scale);
+    if (mesh.current.scale.x < maxScale) {
+      const increaseScale = mesh.current.scale.x + 0.1;
+      mesh.current.scale.x = increaseScale;
+      mesh.current.scale.y = increaseScale;
+      mesh.current.scale.z = increaseScale;
+    } else if (mesh.current.scale.x > minScale) {
+      const decreaseScale = mesh.current.scale.x - 0.1;
+      mesh.current.scale.x = decreaseScale;
+      mesh.current.scale.y = decreaseScale;
+      mesh.current.scale.z = decreaseScale;
+    }
     const currentState = state;
     if (state.isMoving) {
       mesh.current.rotation.x += currentState.y /= 1.1;
@@ -53,7 +66,7 @@ export default function Box(props) {
   };
 
   return (
-    <mesh {...props} ref={mesh} scale={[1, 1, 1]} onPointerDown={mouseDown}>
+    <mesh {...props} ref={mesh} onPointerDown={mouseDown}>
       <boxGeometry attach="geometry" args={[1, 1, 1]} />
       <meshStandardMaterial attach="material" map={texture} />
     </mesh>
