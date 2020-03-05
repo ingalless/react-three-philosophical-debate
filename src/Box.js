@@ -35,18 +35,18 @@ export default function Box(props) {
           mesh.current.scale.z = newScaleFactor;
         };
 
-        const increaseBoxSize = _alterBoxSize;
-        const decreaseBoxSize = factor => _alterBoxSize(-factor);
-        const stopIncreasing = () => (_increase = false);
-        const startIncreasing = () => (_increase = true);
+        const _increaseBoxSize = _alterBoxSize;
+        const _decreaseBoxSize = factor => _alterBoxSize(-factor);
+        const _stopIncreasing = () => (_increase = false);
+        const _startIncreasing = () => (_increase = true);
 
         const checkIncreasing = () => {
           if (_increase) {
-            increaseBoxSize(0.01);
-            if (mesh.current.scale.x > _max) stopIncreasing();
+            _increaseBoxSize(0.01);
+            if (mesh.current.scale.x > _max) _stopIncreasing();
           } else {
-            decreaseBoxSize(0.01);
-            if (mesh.current.scale.x < _min) startIncreasing();
+            _decreaseBoxSize(0.01);
+            if (mesh.current.scale.x < _min) _startIncreasing();
           }
         };
 
