@@ -37,13 +37,13 @@ export default function Box(props) {
 
         const _increaseBoxSize = _alterBoxSize;
         const _decreaseBoxSize = factor => _alterBoxSize(-factor);
-        const _stopIncreasing = () => (_increase = false);
+        const _startDecreasing = () => (_increase = false);
         const _startIncreasing = () => (_increase = true);
 
         const checkIncreasing = () => {
           if (_increase) {
             _increaseBoxSize(0.01);
-            if (mesh.current.scale.x > _max) _stopIncreasing();
+            if (mesh.current.scale.x > _max) _startDecreasing();
           } else {
             _decreaseBoxSize(0.01);
             if (mesh.current.scale.x < _min) _startIncreasing();
