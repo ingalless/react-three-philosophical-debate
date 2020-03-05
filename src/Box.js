@@ -24,18 +24,21 @@ export default function Box(props) {
       mesh.current.rotation.y += currentState.x /= 1.1;
 
       if (Math.abs(currentState.x) + Math.abs(currentState.y) < 0) {
-        setState({ ...currentState, isMoving: false });
+        setState({ x: 0, y: 0, isMoving: false });
       }
     }
   });
 
   const mouseUp = e => {
+    console.log(e.clientX);
+
     setState({
       x: lastKnownMovement.x / scaleFactor,
       y: lastKnownMovement.y / scaleFactor,
       isMoving: true
     });
     window.removeEventListener("mousemove", moveCube);
+    window.removeEventListener("mouseup", mouseUp);
   };
 
   const mouseDown = e => {
