@@ -21,38 +21,40 @@ export default function Box(props) {
 
   console.log("rerendered");
 
-  const boxScaling = useMemo(() =>
-    (function() {
-      let _increase = true;
-      const _max = 1.2;
-      const _min = 0.8;
+  const boxScaling = useMemo(
+    () =>
+      (function() {
+        let _increase = true;
+        const _max = 1.2;
+        const _min = 0.8;
 
-      const _alterBoxSize = factor => {
-        const newScaleFactor = mesh.current.scale.x + factor;
-        mesh.current.scale.x = newScaleFactor;
-        mesh.current.scale.y = newScaleFactor;
-        mesh.current.scale.z = newScaleFactor;
-      };
+        const _alterBoxSize = factor => {
+          const newScaleFactor = mesh.current.scale.x + factor;
+          mesh.current.scale.x = newScaleFactor;
+          mesh.current.scale.y = newScaleFactor;
+          mesh.current.scale.z = newScaleFactor;
+        };
 
-      const increaseBoxSize = _alterBoxSize;
-      const decreaseBoxSize = factor => _alterBoxSize(-factor);
-      const stopIncreasing = () => (_increase = false);
-      const startIncreasing = () => (_increase = true);
+        const increaseBoxSize = _alterBoxSize;
+        const decreaseBoxSize = factor => _alterBoxSize(-factor);
+        const stopIncreasing = () => (_increase = false);
+        const startIncreasing = () => (_increase = true);
 
-      const checkIncreasing = () => {
-        if (_increase) {
-          increaseBoxSize(0.01);
-          if (mesh.current.scale.x > _max) stopIncreasing();
-        } else {
-          decreaseBoxSize(0.01);
-          if (mesh.current.scale.x < _min) startIncreasing();
-        }
-      };
+        const checkIncreasing = () => {
+          if (_increase) {
+            increaseBoxSize(0.01);
+            if (mesh.current.scale.x > _max) stopIncreasing();
+          } else {
+            decreaseBoxSize(0.01);
+            if (mesh.current.scale.x < _min) startIncreasing();
+          }
+        };
 
-      return {
-        checkIncreasing
-      };
-    })()
+        return {
+          checkIncreasing
+        };
+      })(),
+    []
   );
 
   useFrame(() => {
