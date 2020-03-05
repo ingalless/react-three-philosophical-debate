@@ -12,6 +12,8 @@ function App() {
         <perspectiveCamera fov={75} aspect={2} near={0.1} far={5} />
         <Suspense fallback="loading...">
           <Box position={[0, 0, 0]} />
+          <Box position={[1, 0, 0]} />
+          <Box position={[0, 1, 0]} />
         </Suspense>
       </Canvas>
     </>
