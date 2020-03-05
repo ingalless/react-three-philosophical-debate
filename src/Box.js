@@ -19,20 +19,24 @@ export default function Box(props) {
   };
   const [state, setState] = useState({ x: 0, y: 0, isMoving: false });
 
-  const maxScale = 2;
-  const minScale = 0.5;
+  const maxScale = 1.2;
+  const minScale = 0.8;
+
+  let increaseBoxSize = true;
+
   useFrame(() => {
-    console.log(mesh.current.scale);
-    if (mesh.current.scale.x < maxScale) {
-      const increaseScale = mesh.current.scale.x + 0.1;
+    if (increaseBoxSize) {
+      const increaseScale = mesh.current.scale.x + 0.01;
       mesh.current.scale.x = increaseScale;
       mesh.current.scale.y = increaseScale;
       mesh.current.scale.z = increaseScale;
-    } else if (mesh.current.scale.x > minScale) {
-      const decreaseScale = mesh.current.scale.x - 0.1;
+      if (mesh.current.scale.x > maxScale) increaseBoxSize = false;
+    } else {
+      const decreaseScale = mesh.current.scale.x - 0.01;
       mesh.current.scale.x = decreaseScale;
       mesh.current.scale.y = decreaseScale;
       mesh.current.scale.z = decreaseScale;
+      if (mesh.current.scale.x < minScale) increaseBoxSize = true;
     }
     const currentState = state;
     if (state.isMoving) {
