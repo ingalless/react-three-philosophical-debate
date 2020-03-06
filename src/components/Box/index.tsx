@@ -1,13 +1,8 @@
 import React, { useRef, useState, useMemo, FC } from 'react'
-import {
-	useFrame,
-	useLoader,
-	PointerEvent,
-	ReactThreeFiber
-} from 'react-three-fiber'
+import { useFrame, useLoader, PointerEvent, ReactThreeFiber } from 'react-three-fiber'
 import { TextureLoader, Mesh } from 'three'
-import { useOrbitControls } from './OrbitControlsProvider'
-import box from './box.jpg'
+import { useOrbitControls } from '../../providers/OrbitControlsProvider'
+import box from '../../assets/images/box.jpg'
 
 interface State {
 	x: number
@@ -51,8 +46,7 @@ const Box: FC<BoxProps> = props => {
 				}
 
 				const _increaseBoxSize = _alterBoxSize
-				const _decreaseBoxSize = (factor: number) =>
-					_alterBoxSize(-factor)
+				const _decreaseBoxSize = (factor: number) => _alterBoxSize(-factor)
 				const _startDecreasing = () => (_increase = false)
 				const _startIncreasing = () => (_increase = true)
 
