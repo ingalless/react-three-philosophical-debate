@@ -1,8 +1,9 @@
-import React, { useRef, useState, useMemo, FC } from 'react'
+import React, { useRef, useState, FC } from 'react'
 import { useFrame, useLoader, PointerEvent, ReactThreeFiber } from 'react-three-fiber'
 import { TextureLoader, Mesh } from 'three'
 import { useOrbitControls } from '../../providers/OrbitControlsProvider'
 import box from '../../assets/images/box.jpg'
+import { useSpring, a } from 'react-spring/three'
 
 interface State {
 	x: number
@@ -16,6 +17,8 @@ interface BoxProps {
 
 const Box: FC<BoxProps> = props => {
 	const [state, setState] = useState<State>({ x: 0, y: 0, isMoving: false })
+	const [active, setActive] = useState(false)
+	const scaleProps = useSpring({ scale: active ? [1.5, 1.5, 1.5] : [1, 1, 1] })
 	const controls = useOrbitControls()
 	const mesh = useRef<Mesh>()
 	const texture = useLoader(TextureLoader, box)
@@ -31,45 +34,7 @@ const Box: FC<BoxProps> = props => {
 
 	console.log('rerendered')
 
-	const boxScaling = useMemo(
-		() =>
-			(function() {
-				let _increase = true
-				const _max = 1.2
-				const _min = 0.8
-
-				const _alterBoxSize = (factor: number) => {
-					const newScaleFactor = mesh.current.scale.x + factor
-					mesh.current.scale.x = newScaleFactor
-					mesh.current.scale.y = newScaleFactor
-					mesh.current.scale.z = newScaleFactor
-				}
-
-				const _increaseBoxSize = _alterBoxSize
-				const _decreaseBoxSize = (factor: number) => _alterBoxSize(-factor)
-				const _startDecreasing = () => (_increase = false)
-				const _startIncreasing = () => (_increase = true)
-
-				const checkIncreasing = () => {
-					if (_increase) {
-						_increaseBoxSize(0.01)
-						if (mesh.current.scale.x > _max) _startDecreasing()
-					} else {
-						_decreaseBoxSize(0.01)
-						if (mesh.current.scale.x < _min) _startIncreasing()
-					}
-				}
-
-				return {
-					checkIncreasing
-				}
-			})(),
-		[]
-	)
-
 	useFrame(() => {
-		boxScaling.checkIncreasing()
-
 		const currentState = state
 		if (state.isMoving) {
 			mesh.current.rotation.x += currentState.y /= 1.1
@@ -104,10 +69,10 @@ const Box: FC<BoxProps> = props => {
 	}
 
 	return (
-		<mesh position={props.position} ref={mesh} onPointerDown={mouseDown}>
+		<a.mesh ref={mesh} onClick={() => setActive(!active)} position={props.position} scale={scaleProps.scale} onPointerDown={mouseDown}>
 			<boxGeometry attach='geometry' args={[1, 1, 1]} />
 			<meshStandardMaterial attach='material' map={texture} />
-		</mesh>
+		</a.mesh>
 	)
 }
 
